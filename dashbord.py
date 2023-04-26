@@ -1,5 +1,6 @@
 from tkinter import*
 from PIL import Image,ImageTk
+from Employee import employee
 class erp:
     def __init__(self,root):
         self.root=root
@@ -41,14 +42,31 @@ class erp:
         
         btn_HR=Button(left_menu,text="HRM",font=("times new roman",15,"bold"),image=self.icon_side,compound=LEFT,padx=6,anchor="w",bg="white",cursor="hand2",bd=2).pack(side=TOP,fill=X)
         btn_CRM=Button(left_menu,text="CRM",font=("times new roman",15,"bold"),image=self.icon_side,compound=LEFT,padx=6,anchor="w",bg="white",cursor="hand2",bd=2).pack(side=TOP,fill=X)
-        btn_EMPLOYEE=Button(left_menu,text="EMPLOYEE",font=("times new roman",15,"bold"),image=self.icon_side,compound=LEFT,padx=6,anchor="w",bg="white",cursor="hand2",bd=2).pack(side=TOP,fill=X)
+        btn_EMPLOYEE=Button(left_menu,text="EMPLOYEE",command=self.employee,font=("times new roman",15,"bold"),image=self.icon_side,compound=LEFT,padx=6,anchor="w",bg="white",cursor="hand2",bd=2).pack(side=TOP,fill=X)
         btn_ORDER=Button(left_menu,text="ORDER MANAGEMENT",font=("times new roman",15,"bold"),image=self.icon_side,compound=LEFT,padx=4,anchor="w",bg="white",cursor="hand2",bd=2).pack(side=TOP,fill=X)
         btn_MANUFACTURE=Button(left_menu,text="MANUFACTURING",font=("times new roman",15,"bold"),image=self.icon_side,compound=LEFT,padx=6,anchor="w",bg="white",cursor="hand2",bd=2).pack(side=TOP,fill=X)
         btn_ACCOUNT=Button(left_menu,text="ACCOUNTING",font=("times new roman",15,"bold"),image=self.icon_side,compound=LEFT,padx=6,anchor="w",bg="white",cursor="hand2",bd=2).pack(side=TOP,fill=X)
         btn_EXIT=Button(left_menu,text="EXIT",font=("times new roman",15,"bold"),image=self.icon_side,compound=LEFT,padx=6,anchor="w",bg="white",cursor="hand2",bd=2).pack(side=TOP,fill=X)
         
+        #____content____
+        self.lbl_Emp=Label(self.root,text="Total Employee\n[ 0 ]",font=("goudy old style",20,"bold"),bg="#33bbf9",fg="white",bd=4,relief=RIDGE)
+        self.lbl_Emp.place(x=350,y=150,height=150,width=300)
+        
+        self.lbl_Ord=Label(self.root,text="Total Order\n[ 0 ]",font=("goudy old style",20,"bold"),bg="#33bbf9",fg="white",bd=4,relief=RIDGE)
+        self.lbl_Ord.place(x=750,y=150,height=150,width=300)
+        
+        self.lbl_Ord=Label(self.root,text="Total Order\n[ 0 ]",font=("goudy old style",20,"bold"),bg="#33bbf9",fg="white",bd=4,relief=RIDGE)
+        self.lbl_Ord.place(x=750,y=150,height=150,width=300)
+        
+        
         #____footer___
         lbl_footer=Label(self.root,text="ERP-Enterprise Resource Plannig || Developed by UIAPL Team\nFor any Technical Issue Contact:- 74xxxxxx84",padx=5,pady=14,anchor=CENTER,font=("times new roman",12),bg="grey",fg="white").pack(side=BOTTOM,fill=X)
+    
+    
+    #_____________________Employee_page________________________________
+    def employee(self):
+        self.new_wind=Toplevel(self.root)
+        self.new_obj=employee(self.new_wind)
         
         
         
