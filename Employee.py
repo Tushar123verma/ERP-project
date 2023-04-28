@@ -10,7 +10,7 @@ class employee:
         self.root.config(bg="white")
         self.root.focus_force()
         
-         #All variables
+        #All variables
         self.var_searchby=StringVar()
         self.var_searchtxt=StringVar()
         
@@ -39,7 +39,7 @@ class employee:
         txt_search=Entry(searchFrame,textvariable=self.var_searchtxt,bg="lightyellow",font=("goudy old style",15))
         txt_search.place(x=200,y=10)
         
-        btn_search=Button(searchFrame,text="Search",bg="green",fg="white",cursor="hand2",font=("goudy old style",14,"bold")).place(x=410,y=10,width=150,height=25)
+        btn_search=Button(searchFrame,text="Search",command=self.search,bg="green",fg="white",cursor="hand2",font=("goudy old style",14,"bold")).place(x=410,y=10,width=150,height=25)
         
         #____Title_emp____
         emp_lbl=Label(self.root,text="Employee Details",font=("goudy old style",15,'bold'),bg="#45458B",fg='white').place(x=80,y=100,width=1030)
@@ -81,16 +81,16 @@ class employee:
         pan_lbl=Label(self.root,text="PAN",font=("times new roman",15),bg="white").place(x=800,y=300)
         
         self.address_txt=Text(self.root,font=("times new roman",15),bg="lightyellow")
-        self.address_txt.place(x=200,y=300,width=200,height=100)
+        self.address_txt.place(x=200,y=300,width=200,height=90)
         aadhar_txt=Entry(self.root,textvariable=self.var_aadhar,font=("times new roman",15),bg="lightyellow").place(x=550,y=300)
         pan_txt=Entry(self.root,textvariable=self.var_pan,font=("times new roman",15),bg="lightyellow").place(x=900,y=300)
         
         
         #_______Button_________
         btn_save=Button(self.root,text="Save",command=self.add,bg="Grey",fg="white",font=("goudy old style",14,"bold"),cursor='hand2').place(x=450,y=360,width=100,height=25)
-        btn_update=Button(self.root,text="Update",bg="Grey",fg="white",font=("goudy old style",14,"bold"),cursor='hand2').place(x=570,y=360,width=100,height=25)
-        btn_delete=Button(self.root,text="Delete",bg="Grey",fg="white",font=("goudy old style",14,"bold"),cursor='hand2').place(x=690,y=360,width=100,height=25)
-        btn_update=Button(self.root,text="Clear",bg="Grey",fg="white",font=("goudy old style",14,"bold"),cursor='hand2').place(x=810,y=360,width=100,height=25)
+        btn_update=Button(self.root,text="Update",command=self.update,bg="Grey",fg="white",font=("goudy old style",14,"bold"),cursor='hand2').place(x=570,y=360,width=100,height=25)
+        btn_delete=Button(self.root,text="Delete",command=self.delete,bg="Grey",fg="white",font=("goudy old style",14,"bold"),cursor='hand2').place(x=690,y=360,width=100,height=25)
+        btn_clear=Button(self.root,text="Clear",command=self.clear,bg="Grey",fg="white",font=("goudy old style",14,"bold"),cursor='hand2').place(x=810,y=360,width=100,height=25)
         
         #______Employee_table_________
         emp_frame=Frame(self.root,bd=3,relief=RIDGE)
@@ -208,7 +208,109 @@ class employee:
         self.address_txt.delete('1.0',END)
         self.address_txt.insert(END,row[11])
         
+    #Update info____________________
         
+    def update(self):
+        con=sqlite3.Connection(database=r'erp.db')
+        cur=con.cursor()
+        try:
+            if self.var_empid.get()=="":
+                messagebox.showerror("Error",'Employee ID must be required',parent=self.root)
+            else:
+                cur.execute('Select * from employee where eid=?',(self.var_empid.get(),))
+                row=cur.fetchone()
+                if row==None:
+                    messagebox.showerror('Error',"Invaild employee ID",parent=self.root)
+                else:
+                    cur.execute("Update employee set name=?,email=?,gender=?,contact=?,dob=?,doj=?,pass=?,usertype=?,aadhar=?,pan=?,address=? where eid=?",(
+                        self.var_name.get(),
+                        self.var_email.get(),
+                        self.var_gender.get(),
+                        self.var_contact.get(),
+                        self.var_dob.get(),
+                        self.var_doj.get(),
+                        self.var_pass.get(),
+                        self.var_utype.get(),
+                        self.var_aadhar.get(),
+                        self.var_pan.get(),
+                        self.address_txt.get('1.0',END),
+                        self.var_empid.get(),
+                        
+                        
+                    ))
+                    con.commit()
+                    messagebox.showinfo("Success","Employee Updated successfully",parent=self.root) 
+                    self.show()
+        except Exception as e:
+            messagebox.showerror('Error',f'error due to: {str(e)}',parent=self.root)
+        
+    
+    #________Delete info____________
+    
+    def delete(self):
+        con=sqlite3.Connection(database=r'erp.db')
+        cur=con.cursor()
+        try:
+            if self.var_empid.get()=="":
+                messagebox.showerror("Error",'Employee ID must be required',parent=self.root)
+            else:
+                cur.execute('Select * from employee where eid=?',(self.var_empid.get(),))
+                row=cur.fetchone()
+                if row==None:
+                    messagebox.showerror('Error',"Invaild employee ID",parent=self.root)
+                else:
+                    op=messagebox.askyesno('confirm','Do you want to delete?',parent=self.root)
+                    if op==True:
+                        cur.execute("delete from employee where eid=?", (self.var_empid.get(),))
+                        con.commit()
+                        messagebox.showinfo("Success","Employee Deleted successfully",parent=self.root) 
+                        self.clear()
+        except Exception as e:
+            messagebox.showerror('Error',f'error due to: {str(e)}',parent=self.root)
+            
+    #____Clear_Info__________
+    
+    def clear(self):
+        self.var_empid.set('')
+        self.var_name.set('')
+        self.var_email.set('')
+        self.var_gender.set('select')
+        self.var_contact.set('')
+        self.var_dob.set('')
+        self.var_doj.set('')
+        self.var_pass.set('')
+        self.var_utype.set('select')
+        self.var_aadhar.set('')
+        self.var_pan.set('')
+        self.address_txt.delete('1.0',END)
+        self.var_searchtxt.set('')
+        self.var_searchby.set('Select')
+        self.show()
+        
+    def search(self):
+        con=sqlite3.Connection(database=r'erp.db')
+        cur=con.cursor()
+        try:
+            if self.var_searchby.get()=='select':
+                messagebox.showerror('Error','select search by option',parent=self.root)
+            elif self.var_searchtxt.get()=="":
+                messagebox.showerror('Error',"Search input should be required",parent=self.root)
+            else:
+                cur.execute("select * from employee where "+self.var_searchby.get()+" LIKE '%"+self.var_searchtxt.get()+"%'")
+                rows=cur.fetchall()
+                if len(rows)!=0:
+                    self.employeeTable.delete(*self.employeeTable.get_children())
+                    for row in rows:
+                        self.employeeTable.insert('',END,values=row)
+                else:
+                    messagebox.showerror("Error","No Record Found",parent=self.root)
+        except Exception as e:
+            messagebox.showerror('Error',f'error due to: {str(e)}',parent=self.root) 
+        
+        
+        
+    
+    
         
         
 
